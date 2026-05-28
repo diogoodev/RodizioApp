@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a56db">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rodízio Oficina">
+<link rel="manifest" href="manifest.json">
+<title>Rodízio Oficina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --surface: #ffffff;
+    --surface2: #eef1f8;
+    --border: #d1d9e8;
+    --text: #111827;
+    --text2: #4b5563;
+    --text3: #9ca3af;
+    --blue: #1a56db;
+    --blue-light: #dbeafe;
+    --blue-dark: #1340a8;
+    --orange: #ea580c;
+    --orange-light: #ffedd5;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --yellow: #d97706;
+    --yellow-light: #fef3c7;
+    --radius: 10px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    overscroll-behavior: none;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--blue);
+    color: #fff;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(26,86,219,0.25);
+  }
+  .header-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-logo span { font-weight: 400; opacity: 0.75; font-size: 15px; }
+  .header-date {
+    font-size: 13px;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 13px 8px 11px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .tab.active-blue { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab.active-orange { color: var(--orange); border-bottom-color: var(--orange); }
+  .tab.active-green { color: var(--green); border-bottom-color: var(--green); }
+
+  /* MAIN */
+  .main { padding: 16px; max-width: 900px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.3px;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 0 6px;
+  }
+  .badge-blue { background: var(--blue); color: #fff; }
+  .badge-orange { background: var(--orange); color: #fff; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  /* PROXIMO CARD */
+  .next-card {
+    background: linear-gradient(135deg, var(--blue) 0%, #1340a8 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(26,86,219,0.3);
+  }
+  .next-card.orange {
+    background: linear-gradient(135deg, var(--orange) 0%, #c2410c 100%);
+    box-shadow: 0 4px 16px rgba(234,88,12,0.3);
+  }
+  .next-label { font-size: 12px; font-weight: 600; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .next-name { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 0.3px; }
+  .next-icon { font-size: 40px; opacity: 0.6; }
+
+  /* BTN LANCAR */
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 16px;
+  }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-blue:active { background: var(--blue-dark); transform: scale(0.98); }
+  .btn-orange { background: var(--orange); color: #fff; }
+  .btn-orange:active { background: #c2410c; transform: scale(0.98); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:active { background: #15803d; transform: scale(0.98); }
+
+  /* MECANICO ROW */
+  .mec-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: grab;
+    user-select: none;
+    transition: background 0.1s;
+    position: relative;
+  }
+  .mec-row:last-child { border-bottom: none; }
+  .mec-row:active { background: var(--surface2); }
+  .mec-row.dragging { opacity: 0.4; background: var(--blue-light); }
+  .mec-row.drag-over { border-top: 2px solid var(--blue); }
+  .mec-row.ferias { opacity: 0.55; }
+  .drag-handle { color: var(--text3); font-size: 18px; cursor: grab; flex-shrink: 0; }
+  .mec-pos {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .mec-pos-next { background: var(--blue); color: #fff; }
+  .mec-pos-normal { background: var(--surface2); color: var(--text2); }
+  .mec-pos-ferias { background: var(--yellow-light); color: var(--yellow); }
+  .mec-name { font-weight: 600; font-size: 15px; flex: 1; }
+  .mec-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text2);
+  }
+  .ferias-tag {
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--yellow-light);
+    color: var(--yellow);
+    border-radius: 4px;
+    padding: 2px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* HISTORICO */
+  .hist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-tipo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .hist-tipo-guincho { background: var(--blue-light); }
+  .hist-tipo-seminovo { background: var(--orange-light); }
+  .hist-info { flex: 1; }
+  .hist-placa { font-weight: 700; font-size: 14px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
+  .hist-sub { font-size: 12px; color: var(--text2); }
+  .hist-date { font-size: 12px; color: var(--text3); text-align: right; white-space: nowrap; }
+  .tag-diag { background: var(--blue-light); color: var(--blue); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .tag-rev { background: var(--green-light); color: var(--green); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .tag-ambos { background: var(--orange-light); color: var(--orange); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+
+  /* PAINEL */
+  .painel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .painel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .painel-card.ferias-card { opacity: 0.6; }
+  .painel-mec-name { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+  .painel-nums { display: flex; gap: 8px; justify-content: center; }
+  .painel-num {
+    flex: 1;
+    border-radius: 8px;
+    padding: 8px 4px;
+  }
+  .painel-num-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; line-height: 1; }
+  .painel-num-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; color: var(--text2); }
+  .num-guincho { background: var(--blue-light); }
+  .num-seminovo { background: var(--orange-light); }
+  .num-guincho .painel-num-val { color: var(--blue); }
+  .num-seminovo .painel-num-val { color: var(--orange); }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-backdrop.hidden { display: none; }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 32px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-input:focus { border-color: var(--blue); }
+  .form-input.uppercase { text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+
+  .tipo-sel { display: flex; gap: 8px; }
+  .tipo-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text2);
+    text-align: center;
+  }
+  .tipo-btn.sel-diag { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .tipo-btn.sel-rev { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .tipo-btn.sel-ambos { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-cancel {
+    flex: 1;
+    padding: 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text2);
+  }
+  .btn-confirm {
+    flex: 2;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: #fff;
+    transition: all 0.15s;
+  }
+  .btn-confirm-blue { background: var(--blue); }
+  .btn-confirm-orange { background: var(--orange); }
+
+  /* EXPORT BTN */
+  .export-row { display: flex; gap: 10px; margin-top: 8px; margin-bottom: 4px; }
+  .btn-export {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+  .btn-export:active { background: var(--surface2); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 32px 16px; color: var(--text3); }
+  .empty-icon { font-size: 40px; margin-bottom: 8px; }
+  .empty-text { font-size: 14px; }
+
+  /* SCROLL DEL HIST */
+  .hist-scroll { max-height: 420px; overflow-y: auto; }
+
+  /* FERIAS TOGGLE */
+  .ferias-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .ferias-toggle:last-child { border-bottom: none; }
+  .toggle {
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--border);
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--green); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  .info-row {
+    background: var(--blue-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--blue-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* DELETE BTN no historico */
+  .btn-del {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 15px;
+    transition: color 0.15s;
+  }
+  .btn-del:hover { color: var(--red); }
+
+  /* VIEW MODE */
+  body.view-mode .btn-primary,
+  body.view-mode .btn-del,
+  body.view-mode .export-row,
+  body.view-mode .drag-handle { display: none !important; }
+  body.view-mode .tab:nth-child(4) { display: none; }
+  body.view-mode .next-card { cursor: default !important; }
+  .view-mode-badge {
+    font-size: 11px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+
+  /* PRÓXIMO EDITÁVEL */
+  .next-card { cursor: pointer; }
+  .next-card:active { opacity: 0.85; }
+  .next-edit-hint { font-size: 11px; opacity: 0.6; margin-top: 5px; letter-spacing: 0.2px; }
+
+  /* PAINEL CLICKABLE */
+  .painel-card { cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+  .painel-card:active { transform: scale(0.97); box-shadow: var(--shadow); }
+  .painel-tap-hint { font-size: 10px; color: var(--text3); margin-top: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+
+  /* DETALHE MECÂNICO */
+  .detail-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+  .detail-section-title:first-child { margin-top: 0; }
+  .detail-breakdown { display: flex; flex-direction: column; gap: 6px; }
+  .detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+  .detail-item-label { font-size: 14px; font-weight: 600; }
+  .detail-item-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; }
+  .detail-guincho { background: var(--blue-light); }
+  .detail-guincho .detail-item-val { color: var(--blue); }
+  .detail-diag { background: var(--blue-light); }
+  .detail-diag .detail-item-val { color: var(--blue); }
+  .detail-rev { background: var(--green-light); }
+  .detail-rev .detail-item-val { color: var(--green); }
+  .detail-ambos { background: var(--orange-light); }
+  .detail-ambos .detail-item-val { color: var(--orange); }
+
+  /* SELEÇÃO PRÓXIMO */
+  .prox-mec-list { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+  .prox-mec-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .prox-mec-item:active { background: var(--surface2); }
+  .prox-mec-item.current-blue { border-color: var(--blue); background: var(--blue-light); }
+  .prox-mec-item.current-orange { border-color: var(--orange); background: var(--orange-light); }
+  .prox-mec-name { font-weight: 600; flex: 1; font-size: 15px; }
+  .prox-mec-count { font-size: 12px; color: var(--text3); }
+  .prox-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .prox-badge-blue { background: var(--blue); color: #fff; }
+  .prox-badge-orange { background: var(--orange); color: #fff; }
+
+  /* LINK VIEW */
+  .view-link-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .view-link-url {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+    word-break: break-all;
+    color: var(--blue-dark);
+  }
+  .btn-copy {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .btn-copy:active { background: var(--blue-dark); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">🔧 RODÍZIO <span>Oficina</span></div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active-blue" onclick="showPage('guincho')">🏗️ Guincho</button>
+  <button class="tab" onclick="showPage('seminovo')">🔍 Seminovos</button>
+  <button class="tab" onclick="showPage('painel')">📊 Painel</button>
+  <button class="tab" onclick="showPage('config')">⚙️ Config</button>
+</div>
+
+<div class="main">
+
+  <!-- PAGE: GUINCHO -->
+  <div id="page-guincho" class="page active">
+    <div id="next-guincho" class="next-card" onclick="openProxModal('guincho')">
+      <div>
+        <div class="next-label">Próximo — Guincho</div>
+        <div class="next-name" id="prox-guincho-nome">—</div>
+        <div class="next-edit-hint">✏️ Toque para alterar</div>
+      </div>
+      <div class="next-icon">🏗️</div>
+    </div>
+
+    <button class="btn-primary btn-blue" onclick="openModal('guincho')">
+      ➕ Lançar Veículo — Guincho
+    </button>
+
+    <div class="section-title">
+      Ordem do Rodízio
+      <span class="badge badge-blue" id="badge-guincho">0</span>
+    </div>
+    <div class="card" id="list-guincho"></div>
+
+    <div class="section-title" style="margin-top:20px">Histórico <span id="hist-guincho-count" class="badge badge-blue">0</span></div>
+    <div class="export-row">
+      <button class="btn-export" onclick="exportCSV('guincho')">📥 Exportar Guincho .CSV</button>
+    </div>
+    <div class="card hist-scroll" id="hist-guincho"></div>
+  </div>
+
+  <!-- PAGE: SEMINOVO -->
+  <div id="page-seminovo" class="page">
+    <div id="next-seminovo" class="next-card orange" onclick="openProxModal('seminovo')">
+      <div>
+        <div class="next-label">Próximo — Seminovos</div>
+        <div class="next-name" id="prox-seminovo-nome">—</div>
+        <div class="next-edit-hint">✏️ Toque para alterar</div>
+      </div>
+      <div class="next-icon">🔍</div>
+    </div>
+
+    <button class="btn-primary btn-orange" onclick="openModal('seminovo')">
+      ➕ Lançar Veículo — Seminovos
+    </button>
+
+    <div class="section-title">
+      Ordem do Rodízio
+      <span class="badge badge-orange" id="badge-seminovo">0</span>
+    </div>
+    <div class="card" id="list-seminovo"></div>
+
+    <div class="section-title" style="margin-top:20px">Histórico <span id="hist-seminovo-count" class="badge badge-orange">0</span></div>
+    <div class="export-row">
+      <button class="btn-export" onclick="exportCSV('seminovo')">📥 Exportar Seminovos .CSV</button>
+    </div>
+    <div class="card hist-scroll" id="hist-seminovo"></div>
+  </div>
+
+  <!-- PAGE: PAINEL -->
+  <div id="page-painel" class="page">
+    <div class="section-title">📊 Painel Geral</div>
+    <div class="info-row">ℹ️ Total de atendimentos por mecânico</div>
+    <div class="painel-grid" id="painel-grid"></div>
+    <div class="export-row">
+      <button class="btn-export" onclick="exportCSV('guincho')">📥 Guincho .CSV</button>
+      <button class="btn-export" onclick="exportCSV('seminovo')">📥 Seminovos .CSV</button>
+    </div>
+  </div>
+
+  <!-- PAGE: CONFIG -->
+  <div id="page-config" class="page">
+    <div class="section-title">⚙️ Configurações</div>
+
+    <div class="info-row">
+      🏖️ Mecânicos em férias ficam fora do rodízio automaticamente
+    </div>
+
+    <div class="section-title" style="font-size:16px; margin-bottom:10px">Controle de Férias</div>
+    <div class="card" id="ferias-list"></div>
+
+    <div class="section-title" style="font-size:16px; margin-top:20px; margin-bottom:10px">👁️ Link para Mecânicos</div>
+    <div class="info-row">Compartilhe o link abaixo. Modo somente leitura, sem edição.</div>
+    <div class="view-link-box">
+      <div class="view-link-url" id="view-link-url"></div>
+      <button class="btn-copy" onclick="copyViewLink()">📋 Copiar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL GUINCHO -->
+<div class="modal-backdrop hidden" id="modal-guincho-backdrop" onclick="closeModal('guincho', event)">
+  <div class="modal" id="modal-guincho">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏗️ Lançar — Guincho</div>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input type="date" id="guincho-data" class="form-input">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Placa / Chassi</label>
+      <input type="text" id="guincho-placa" class="form-input uppercase" placeholder="ABC-1234 ou chassi" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mecânico</label>
+      <select id="guincho-mec" class="form-input"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal('guincho')">Cancelar</button>
+      <button class="btn-confirm btn-confirm-blue" onclick="lancar('guincho')">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SEMINOVO -->
+<div class="modal-backdrop hidden" id="modal-seminovo-backdrop" onclick="closeModal('seminovo', event)">
+  <div class="modal" id="modal-seminovo">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔍 Lançar — Seminovos</div>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input type="date" id="seminovo-data" class="form-input">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Placa / Chassi</label>
+      <input type="text" id="seminovo-placa" class="form-input uppercase" placeholder="ABC-1234 ou chassi" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de Serviço</label>
+      <div class="tipo-sel">
+        <button class="tipo-btn" id="tipo-diag" onclick="selTipo('diagnostico')">🔎 Diagnóst.</button>
+        <button class="tipo-btn" id="tipo-rev" onclick="selTipo('revisao')">🔧 Revisão</button>
+        <button class="tipo-btn" id="tipo-ambos" onclick="selTipo('ambos')">⚡ Ambos</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mecânico</label>
+      <select id="seminovo-mec" class="form-input"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal('seminovo')">Cancelar</button>
+      <button class="btn-confirm btn-confirm-orange" onclick="lancar('seminovo')">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE MECÂNICO -->
+<div class="modal-backdrop hidden" id="modal-detalhe-backdrop" onclick="closeModalDetalhe(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="detalhe-nome">—</div>
+    <div id="detalhe-body"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-cancel" onclick="document.getElementById('modal-detalhe-backdrop').classList.add('hidden')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SELEÇÃO PRÓXIMO -->
+<div class="modal-backdrop hidden" id="modal-prox-backdrop" onclick="closeModalProx(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="prox-modal-title">Alterar Próximo</div>
+    <div class="prox-mec-list" id="prox-mec-list"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-cancel" onclick="document.getElementById('modal-prox-backdrop').classList.add('hidden')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== STATE =====================
+const MECANICOS_INIT = [
+  { id: 1, nome: 'Lucas', ferias: false },
+  { id: 2, nome: 'Francisco', ferias: true },
+  { id: 3, nome: 'Orlando', ferias: false },
+  { id: 4, nome: 'Flavio', ferias: true },
+  { id: 5, nome: 'Cristiano', ferias: false },
+  { id: 6, nome: 'Sandro', ferias: false },
+  { id: 7, nome: 'João Carlos', ferias: false },
+];
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('rodizio_state') || '{}');
+    return {
+      mecanicos: s.mecanicos || JSON.parse(JSON.stringify(MECANICOS_INIT)),
+      ordemGuincho: s.ordemGuincho || MECANICOS_INIT.map(m => m.id),
+      ordemSeminovo: s.ordemSeminovo || MECANICOS_INIT.map(m => m.id),
+      proxGuincho: s.proxGuincho || 0,
+      proxSeminovo: s.proxSeminovo || 0,
+      histGuincho: s.histGuincho || [],
+      histSeminovo: s.histSeminovo || [],
+    };
+  } catch(e) {
+    return {
+      mecanicos: JSON.parse(JSON.stringify(MECANICOS_INIT)),
+      ordemGuincho: MECANICOS_INIT.map(m => m.id),
+      ordemSeminovo: MECANICOS_INIT.map(m => m.id),
+      proxGuincho: 0,
+      proxSeminovo: 0,
+      histGuincho: [],
+      histSeminovo: [],
+    };
+  }
+}
+
+let state = loadState();
+
+function saveState() {
+  localStorage.setItem('rodizio_state', JSON.stringify(state));
+}
+
+// ===================== UTILS =====================
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function fmtDate(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function getMec(id) {
+  return state.mecanicos.find(m => m.id === id);
+}
+
+function getAtivos(tipo) {
+  const ordem = tipo === 'guincho' ? state.ordemGuincho : state.ordemSeminovo;
+  return ordem.filter(id => {
+    const m = getMec(id);
+    return m && !m.ferias;
+  });
+}
+
+function getProxIdx(tipo) {
+  return tipo === 'guincho' ? state.proxGuincho : state.proxSeminovo;
+}
+
+function getProxNome(tipo) {
+  const ativos = getAtivos(tipo);
+  if (!ativos.length) return '—';
+  const idx = getProxIdx(tipo) % ativos.length;
+  const m = getMec(ativos[idx]);
+  return m ? m.nome : '—';
+}
+
+function avancarProx(tipo, mecId) {
+  const ativos = getAtivos(tipo);
+  if (!ativos.length) return;
+  const idx = ativos.indexOf(mecId);
+  if (tipo === 'guincho') {
+    state.proxGuincho = idx >= 0 ? (idx + 1) % ativos.length : (state.proxGuincho + 1) % ativos.length;
+  } else {
+    state.proxSeminovo = idx >= 0 ? (idx + 1) % ativos.length : (state.proxSeminovo + 1) % ativos.length;
+  }
+}
+
+// ===================== RENDER =====================
+function render() {
+  renderHeader();
+  renderRodizio('guincho');
+  renderRodizio('seminovo');
+  renderHistorico('guincho');
+  renderHistorico('seminovo');
+  renderPainel();
+  renderFerias();
+  renderNextCard();
+  renderModalMecs();
+}
+
+function renderHeader() {
+  const d = new Date();
+  const opts = { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' };
+  document.getElementById('headerDate').textContent = d.toLocaleDateString('pt-BR', opts);
+}
+
+function renderNextCard() {
+  document.getElementById('prox-guincho-nome').textContent = getProxNome('guincho');
+  document.getElementById('prox-seminovo-nome').textContent = getProxNome('seminovo');
+}
+
+let dragSrc = null;
+let dragTipo = null;
+
+function renderRodizio(tipo) {
+  const el = document.getElementById(`list-${tipo}`);
+  const ordem = tipo === 'guincho' ? state.ordemGuincho : state.ordemSeminovo;
+  const ativos = getAtivos(tipo);
+  const proxIdx = getProxIdx(tipo);
+
+  document.getElementById(`badge-${tipo}`).textContent = ativos.length;
+
+  if (!ordem.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">👥</div></div>'; return; }
+
+  const histKey = tipo === 'guincho' ? 'histGuincho' : 'histSeminovo';
+  const hist = state[histKey];
+
+  el.innerHTML = '';
+  ordem.forEach((id, i) => {
+    const m = getMec(id);
+    if (!m) return;
+    const ativoIdxArr = ativos.indexOf(id);
+    const isProx = !m.ferias && ativos[proxIdx % ativos.length] === id;
+    const count = hist.filter(h => h.mecId === id).length;
+
+    const row = document.createElement('div');
+    row.className = 'mec-row' + (m.ferias ? ' ferias' : '');
+    row.draggable = true;
+    row.dataset.id = id;
+    row.dataset.tipo = tipo;
+
+    const posClass = m.ferias ? 'mec-pos-ferias' : (isProx ? 'mec-pos-next' : 'mec-pos-normal');
+    const posLabel = m.ferias ? '🏖️' : (i + 1);
+
+    row.innerHTML = `
+      <div class="drag-handle">⠿</div>
+      <div class="mec-pos ${posClass}">${posLabel}</div>
+      <div class="mec-name">${m.nome} ${m.ferias ? '<span class="ferias-tag">Férias</span>' : ''}</div>
+      <div class="mec-count">${count}</div>
+    `;
+
+    row.addEventListener('dragstart', e => {
+      dragSrc = id;
+      dragTipo = tipo;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      document.querySelectorAll('.mec-row').forEach(r => r.classList.remove('drag-over'));
+      row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      if (dragSrc === id || dragTipo !== tipo) return;
+      const arr = tipo === 'guincho' ? state.ordemGuincho : state.ordemSeminovo;
+      const from = arr.indexOf(dragSrc);
+      const to = arr.indexOf(id);
+      if (from < 0 || to < 0) return;
+      arr.splice(from, 1);
+      arr.splice(to, 0, dragSrc);
+      // Resetar índice
+      if (tipo === 'guincho') state.proxGuincho = 0;
+      else state.proxSeminovo = 0;
+      saveState();
+      render();
+    });
+
+    // Touch drag
+    let touchStartY = 0;
+    let touchElem = null;
+    row.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+      touchElem = row;
+    }, { passive: true });
+
+    el.appendChild(row);
+  });
+}
+
+function renderHistorico(tipo) {
+  const histKey = tipo === 'guincho' ? 'histGuincho' : 'histSeminovo';
+  const hist = state[histKey];
+  const el = document.getElementById(`hist-${tipo}`);
+  const countEl = document.getElementById(`hist-${tipo}-count`);
+  countEl.textContent = hist.length;
+
+  if (!hist.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum lançamento ainda</div></div>';
+    return;
+  }
+
+  el.innerHTML = '';
+  [...hist].reverse().forEach((h, ri) => {
+    const i = hist.length - 1 - ri;
+    const m = getMec(h.mecId);
+    const row = document.createElement('div');
+    row.className = 'hist-row';
+
+    let tipoTag = '';
+    if (tipo === 'seminovo') {
+      if (h.tipo === 'diagnostico') tipoTag = '<span class="tag-diag">Diagnóst.</span>';
+      else if (h.tipo === 'revisao') tipoTag = '<span class="tag-rev">Revisão</span>';
+      else tipoTag = '<span class="tag-ambos">Ambos</span>';
+    }
+
+    const icon = tipo === 'guincho' ? '🏗️' : '🔍';
+    const iconClass = tipo === 'guincho' ? 'hist-tipo-guincho' : 'hist-tipo-seminovo';
+
+    row.innerHTML = `
+      <div class="hist-tipo ${iconClass}">${icon}</div>
+      <div class="hist-info">
+        <div class="hist-placa">${h.placa || '—'}</div>
+        <div class="hist-sub">${m ? m.nome : '?'} ${tipoTag}</div>
+      </div>
+      <div class="hist-date">${fmtDate(h.data)}</div>
+      <button class="btn-del" title="Excluir" onclick="delRegistro('${tipo}', ${i})">🗑️</button>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function renderPainel() {
+  const grid = document.getElementById('painel-grid');
+  grid.innerHTML = '';
+  state.mecanicos.forEach(m => {
+    const g = state.histGuincho.filter(h => h.mecId === m.id).length;
+    const sDiag = state.histSeminovo.filter(h => h.mecId === m.id && h.tipo === 'diagnostico').length;
+    const sRev  = state.histSeminovo.filter(h => h.mecId === m.id && h.tipo === 'revisao').length;
+    const sAmbos= state.histSeminovo.filter(h => h.mecId === m.id && h.tipo === 'ambos').length;
+    const s = sDiag + sRev + sAmbos;
+    const card = document.createElement('div');
+    card.className = 'painel-card' + (m.ferias ? ' ferias-card' : '');
+    card.innerHTML = `
+      <div class="painel-mec-name">${m.nome} ${m.ferias ? '🏖️' : ''}</div>
+      <div class="painel-nums">
+        <div class="painel-num num-guincho">
+          <div class="painel-num-val">${g}</div>
+          <div class="painel-num-label">Guincho</div>
+        </div>
+        <div class="painel-num num-seminovo">
+          <div class="painel-num-val">${s}</div>
+          <div class="painel-num-label">Seminovo</div>
+        </div>
+      </div>
+      <div class="painel-tap-hint">toque para detalhes</div>
+    `;
+    card.onclick = () => openPainelDetail(m.id);
+    grid.appendChild(card);
+  });
+}
+
+function renderFerias() {
+  const el = document.getElementById('ferias-list');
+  el.innerHTML = '';
+  state.mecanicos.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'ferias-toggle';
+    row.innerHTML = `
+      <div style="flex:1; font-weight:600">${m.nome}</div>
+      <div style="font-size:13px; color:var(--text2); margin-right:8px">${m.ferias ? 'Em férias' : 'Ativo'}</div>
+      <div class="toggle ${m.ferias ? '' : 'on'}" id="tog-${m.id}"></div>
+    `;
+    row.onclick = () => toggleFerias(m.id);
+    el.appendChild(row);
+  });
+}
+
+function renderModalMecs() {
+  ['guincho', 'seminovo'].forEach(tipo => {
+    const sel = document.getElementById(`${tipo}-mec`);
+    const ativos = getAtivos(tipo);
+    sel.innerHTML = '';
+    ativos.forEach(id => {
+      const m = getMec(id);
+      if (!m) return;
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = m.nome;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ===================== AÇÕES =====================
+function toggleFerias(id) {
+  const m = state.mecanicos.find(m => m.id === id);
+  if (m) {
+    m.ferias = !m.ferias;
+    state.proxGuincho = 0;
+    state.proxSeminovo = 0;
+    saveState();
+    render();
+  }
+}
+
+let tipoSeminovoSel = null;
+
+function selTipo(tipo) {
+  tipoSeminovoSel = tipo;
+  document.getElementById('tipo-diag').className = 'tipo-btn' + (tipo === 'diagnostico' ? ' sel-diag' : '');
+  document.getElementById('tipo-rev').className = 'tipo-btn' + (tipo === 'revisao' ? ' sel-rev' : '');
+  document.getElementById('tipo-ambos').className = 'tipo-btn' + (tipo === 'ambos' ? ' sel-ambos' : '');
+}
+
+function openModal(tipo) {
+  renderModalMecs();
+  const prox = getProxNome(tipo);
+  const ativos = getAtivos(tipo);
+  const proxIdx = getProxIdx(tipo);
+  const proxId = ativos[proxIdx % ativos.length];
+
+  if (tipo === 'guincho') {
+    document.getElementById('guincho-data').value = todayStr();
+    document.getElementById('guincho-placa').value = '';
+    if (proxId) document.getElementById('guincho-mec').value = proxId;
+    document.getElementById('modal-guincho-backdrop').classList.remove('hidden');
+  } else {
+    document.getElementById('seminovo-data').value = todayStr();
+    document.getElementById('seminovo-placa').value = '';
+    tipoSeminovoSel = null;
+    selTipo(null);
+    if (proxId) document.getElementById('seminovo-mec').value = proxId;
+    document.getElementById('modal-seminovo-backdrop').classList.remove('hidden');
+  }
+}
+
+function closeModal(tipo, e) {
+  if (e.target === document.getElementById(`modal-${tipo}-backdrop`)) {
+    fecharModal(tipo);
+  }
+}
+
+function fecharModal(tipo) {
+  document.getElementById(`modal-${tipo}-backdrop`).classList.add('hidden');
+}
+
+function lancar(tipo) {
+  if (tipo === 'guincho') {
+    const data = document.getElementById('guincho-data').value;
+    const placa = document.getElementById('guincho-placa').value.trim().toUpperCase();
+    const mecId = parseInt(document.getElementById('guincho-mec').value);
+    if (!placa) { alert('Informe a placa ou chassi'); return; }
+    state.histGuincho.push({ data, placa, mecId, ts: Date.now() });
+    avancarProx('guincho', mecId);
+  } else {
+    const data = document.getElementById('seminovo-data').value;
+    const placa = document.getElementById('seminovo-placa').value.trim().toUpperCase();
+    const mecId = parseInt(document.getElementById('seminovo-mec').value);
+    if (!placa) { alert('Informe a placa ou chassi'); return; }
+    if (!tipoSeminovoSel) { alert('Selecione o tipo de serviço'); return; }
+    state.histSeminovo.push({ data, placa, mecId, tipo: tipoSeminovoSel, ts: Date.now() });
+    avancarProx('seminovo', mecId);
+  }
+  fecharModal(tipo);
+  saveState();
+  render();
+}
+
+function delRegistro(tipo, idx) {
+  if (!confirm('Excluir este registro?')) return;
+  if (tipo === 'guincho') state.histGuincho.splice(idx, 1);
+  else state.histSeminovo.splice(idx, 1);
+  saveState();
+  render();
+}
+
+// ===================== EXPORT CSV =====================
+function exportCSV(tipo) {
+  const hist = tipo === 'guincho' ? state.histGuincho : state.histSeminovo;
+  if (!hist.length) { alert('Nenhum dado para exportar'); return; }
+
+  let csv = tipo === 'guincho'
+    ? 'Data,Placa/Chassi,Mecânico\n'
+    : 'Data,Placa/Chassi,Tipo,Mecânico\n';
+
+  hist.forEach(h => {
+    const m = getMec(h.mecId);
+    const nome = m ? m.nome : '?';
+    if (tipo === 'guincho') {
+      csv += `${fmtDate(h.data)},${h.placa},${nome}\n`;
+    } else {
+      const tp = h.tipo === 'diagnostico' ? 'Diagnóstico' : h.tipo === 'revisao' ? 'Revisão' : 'Diagnóstico + Revisão';
+      csv += `${fmtDate(h.data)},${h.placa},${tp},${nome}\n`;
+    }
+  });
+
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `rodizio_${tipo}_${dateStr}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===================== TABS =====================
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => {
+    el.classList.remove('active-blue', 'active-orange', 'active-green');
+  });
+  document.getElementById(`page-${p}`).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const idx = ['guincho', 'seminovo', 'painel', 'config'].indexOf(p);
+  const cls = ['active-blue', 'active-orange', 'active-green', 'active-green'];
+  if (idx >= 0) tabs[idx].classList.add(cls[idx]);
+  if (p === 'painel') renderPainel();
+}
+
+// ===================== VIEW MODE =====================
+const IS_VIEW_MODE = new URLSearchParams(window.location.search).has('view');
+
+function applyViewMode() {
+  if (!IS_VIEW_MODE) return;
+  document.body.classList.add('view-mode');
+  const badge = document.createElement('span');
+  badge.className = 'view-mode-badge';
+  badge.textContent = '👁️ Visualização';
+  document.querySelector('.header').appendChild(badge);
+}
+
+function copyViewLink() {
+  const url = document.getElementById('view-link-url').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✅ Copiado!';
+    setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+  }).catch(() => {
+    prompt('Copie o link:', url);
+  });
+}
+
+function setupViewLink() {
+  const base = window.location.origin + window.location.pathname;
+  document.getElementById('view-link-url').textContent = base + '?view';
+}
+
+// ===================== PAINEL DETAIL =====================
+function openPainelDetail(mecId) {
+  const m = getMec(mecId);
+  if (!m) return;
+  const g     = state.histGuincho.filter(h => h.mecId === mecId).length;
+  const sDiag = state.histSeminovo.filter(h => h.mecId === mecId && h.tipo === 'diagnostico').length;
+  const sRev  = state.histSeminovo.filter(h => h.mecId === mecId && h.tipo === 'revisao').length;
+  const sAmbos= state.histSeminovo.filter(h => h.mecId === mecId && h.tipo === 'ambos').length;
+
+  document.getElementById('detalhe-nome').textContent = m.nome + (m.ferias ? ' 🏖️' : '');
+  document.getElementById('detalhe-body').innerHTML = `
+    <div class="detail-section-title">Guincho</div>
+    <div class="detail-breakdown">
+      <div class="detail-item detail-guincho">
+        <span class="detail-item-label">🏗️ Total</span>
+        <span class="detail-item-val">${g}</span>
+      </div>
+    </div>
+    <div class="detail-section-title">Seminovos</div>
+    <div class="detail-breakdown">
+      <div class="detail-item detail-diag">
+        <span class="detail-item-label">🔎 Diagnóstico</span>
+        <span class="detail-item-val">${sDiag}</span>
+      </div>
+      <div class="detail-item detail-rev">
+        <span class="detail-item-label">🔧 Revisão</span>
+        <span class="detail-item-val">${sRev}</span>
+      </div>
+      <div class="detail-item detail-ambos">
+        <span class="detail-item-label">⚡ Ambos</span>
+        <span class="detail-item-val">${sAmbos}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal-detalhe-backdrop').classList.remove('hidden');
+}
+
+function closeModalDetalhe(e) {
+  if (e.target === document.getElementById('modal-detalhe-backdrop')) {
+    document.getElementById('modal-detalhe-backdrop').classList.add('hidden');
+  }
+}
+
+// ===================== PROX MANUAL =====================
+function openProxModal(tipo) {
+  if (IS_VIEW_MODE) return;
+  const ativos = getAtivos(tipo);
+  if (!ativos.length) return;
+  const proxIdx = getProxIdx(tipo);
+  const currentId = ativos[proxIdx % ativos.length];
+  const isOrange = tipo === 'seminovo';
+
+  document.getElementById('prox-modal-title').textContent =
+    tipo === 'guincho' ? '🏗️ Alterar Próximo — Guincho' : '🔍 Alterar Próximo — Seminovos';
+
+  const list = document.getElementById('prox-mec-list');
+  list.innerHTML = '';
+  ativos.forEach((id, idx) => {
+    const m = getMec(id);
+    if (!m) return;
+    const isCurrent = id === currentId;
+    const hist = tipo === 'guincho' ? state.histGuincho : state.histSeminovo;
+    const count = hist.filter(h => h.mecId === id).length;
+    const item = document.createElement('div');
+    const curClass = isCurrent ? (isOrange ? ' current-orange' : ' current-blue') : '';
+    item.className = 'prox-mec-item' + curClass;
+    const badgeCls = isOrange ? 'prox-badge-orange' : 'prox-badge-blue';
+    item.innerHTML = `
+      <span class="prox-mec-name">${m.nome}</span>
+      <span class="prox-mec-count">${count} atend.</span>
+      ${isCurrent ? `<span class="prox-badge ${badgeCls}">Próximo</span>` : ''}
+    `;
+    item.onclick = () => setProxManual(tipo, idx);
+    list.appendChild(item);
+  });
+
+  document.getElementById('modal-prox-backdrop').classList.remove('hidden');
+}
+
+function closeModalProx(e) {
+  if (e.target === document.getElementById('modal-prox-backdrop')) {
+    document.getElementById('modal-prox-backdrop').classList.add('hidden');
+  }
+}
+
+function setProxManual(tipo, idx) {
+  if (tipo === 'guincho') state.proxGuincho = idx;
+  else state.proxSeminovo = idx;
+  document.getElementById('modal-prox-backdrop').classList.add('hidden');
+  saveState();
+  render();
+}
+
+// ===================== INIT =====================
+render();
+setupViewLink();
+applyViewMode();
+setInterval(renderHeader, 60000);
+
+// SERVICE WORKER
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
